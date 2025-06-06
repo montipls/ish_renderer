@@ -29,9 +29,10 @@ def load_sprite(img: Image) -> list[list[list[int]]]:
     return result
 
 
-def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x: int, y: int) -> None:
-    H = len(surface)
-    W = len(surface[0])
+def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x: int, y: int) -> list[list[list[int]]]:
+    result = surface.copy()
+    H = len(result)
+    W = len(result[0])
     sh = len(sprite)
     sw = len(sprite[0])
 
@@ -45,9 +46,11 @@ def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x
                 continue
             pixel = sprite[sy][sx]
             if pixel[3] != 0:
-                surface[py][px][0] = pixel[0]
-                surface[py][px][1] = pixel[1]
-                surface[py][px][2] = pixel[2]
+                result[py][px][0] = pixel[0]
+                result[py][px][1] = pixel[1]
+                result[py][px][2] = pixel[2]
+                
+    return result
 
 
 def get_string(surface: list[list[list[int]]]) -> list[str]:

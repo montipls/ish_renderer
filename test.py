@@ -30,8 +30,7 @@ def main(stdscr):
         if key == ord('q'):
             break
 
-        blit_sprite(window, sprite, 10, timer)
-        frame = get_string(window)
+        frame = get_string(blit_sprite(window, sprite, 10, timer))
 
         sys.stdout.write("\033[H")  # move cursor to top-left
         sys.stdout.write(''.join(frame))
