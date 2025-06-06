@@ -25,7 +25,7 @@ def load_sprite(img: Image) -> list[list[list[int]]]:
         for x in range(width):
             r, g, b, a = pixels[x, y]
             a = 1 if a > 0 else 0
-            row.append([r, g, b, a])
+            row.append([rgb_to_256(r, g, b), a])
         result.append(row)
     return result
 
@@ -48,8 +48,6 @@ def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x
             pixel = sprite[sy][sx]
             if pixel[3] != 0:
                 result[py][px][0] = pixel[0]
-                result[py][px][1] = pixel[1]
-                result[py][px][2] = pixel[2]
 
     return result
 
@@ -62,12 +60,10 @@ def get_string(surface: list[list[list[int]]]) -> list[str]:
     for y in range(0, H, 2):
         line_chars = []
         for x in range(W):
-            bgpixel = surface[y][x]
-            fgpixel = surface[y+1][x]
-            bgcolor = rgb_to_256(*bgpixel[:3])
-            fgcolor = rgb_to_256(*fgpixel[:3])
+            bg = surface[y][x][0]
+            fg = surface[y+1][x][0]
 
-            char = f"\033[38;5;{fgcolor}m\033[48;5;{bgcolor}m▄\033[0m"
+            char = f"\033[38;5;{fg}m\033[48;5;{bg}m▄\033[0m"
             line_chars.append(char)
         output_lines.append(''.join(line_chars))
     return output_lines
