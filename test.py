@@ -25,19 +25,28 @@ def main(stdscr):
 
     write = sys.stdout.write  # local alias for speed
     flush = sys.stdout.flush
-    
+
     esc_home = "\033[H"
     esc_reset = "\033[0m"
     info = f"{esc_reset}window size: {W} : {H}\n"
 
-    timer = 0
+    x = 0
+    y = 0
     while True:
         timer += 1
         key = stdscr.getch()
         if key == ord('q'):
             break
+        if key == ord('h'):
+            x -= 1
+        if key == ord('l'):
+            x += 1
+        if key == ord('j'):
+            y += 1
+        if key == ord('k'):
+            y -= 1
 
-        frame = get_string(blit_sprite(window, sprite, 10, timer))
+        frame = get_string(blit_sprite(window, sprite, x, y))
 
         write(esc_home)
         write(''.join(frame))
