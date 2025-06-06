@@ -1,6 +1,18 @@
 from PIL import Image
 
 
+def rgb_to_256(r, g, b):
+    r_ = int(r / 256 * 6)
+    g_ = int(g / 256 * 6)
+    b_ = int(b / 256 * 6)
+
+    r_ = min(r_, 5)
+    g_ = min(g_, 5)
+    b_ = min(b_, 5)
+
+    return 16 + 36 * r_ + 6 * g_ + b_
+
+
 def load_sprite(img: Image) -> list[list[list[int]]]:
     img = img.convert("RGBA")
     width, height = img.size
@@ -46,10 +58,12 @@ def get_string(surface: list[list[list[int]]]) -> list[str]:
     for y in range(0, H, 2):
         line_chars = []
         for x in range(W):
-            bg = surface[y][x]
-            fg = surface[y+1][x]
+            bgpixel = surface[y][x]
+            fgpixel = surface[y+1][x]
+            bgcolor = rgb_to_256(*bgpixel[:3])
+            fgcolor = rgb_to_256(*fgpixel[:3])
 
-            char = f"\033[38;2;{fg[0]};{fg[1]};{fg[2]}m\033[48;2;{bg[0]};{bg[1]};{bg[2]}m▄\033[0m"
+            char = f"\033[38;5;{fgcolor}m\033[48;5;{bgcolor}m▄\033[0m"
             line_chars.append(char)
         output_lines.append(''.join(line_chars))
     return output_lines
