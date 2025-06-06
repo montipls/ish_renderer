@@ -2,11 +2,11 @@ from PIL import Image
 from renderer import *
 
 
-img = Image.open('bg.jpeg').convert('RGBA')
+img = Image.open('bg.jpeg')
 img = img.resize((68, 68))
 window = load_sprite(img)
 
-sprite = Image.open('sprite.jpeg').convert('RGBA')
+sprite = Image.open('sprite.jpeg')
 blit_sprite(window, sprite, 0, 0)
 
 frame = get_string(window)
