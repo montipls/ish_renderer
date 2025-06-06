@@ -35,10 +35,10 @@ def main(stdscr):
         frame = get_string(window)
 
         sys.stdout.write("\033[H")  # move cursor to top-left
-        sys.stdout.write('\n'.join(frame) + '\n')
+        sys.stdout.write(''.join(frame) + '\n')
         sys.stdout.write(f"window size: {W} : {H}\n")
         sys.stdout.flush()
-        
+
         stdscr.refresh()
 
 
