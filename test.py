@@ -33,7 +33,6 @@ def main(stdscr):
     x = 0
     y = 0
     while True:
-        timer += 1
         key = stdscr.getch()
         if key == ord('q'):
             break
