@@ -3,15 +3,17 @@ from renderer import *
 import shutil
 
 
-_, rows = shutil.get_terminal_size()
+x, _ = shutil.get_terminal_size()
+even = x % 2 == 0
+print(x)
 
 bg_img = Image.open('bg.jpeg')
-bg_img = bg_img.resize((rows, rows))
+bg_img = bg_img.resize((x, x if even else x-1))
 window = load_sprite(bg_img)
 
 sprite_img = Image.open('sprite.png')
 sprite = load_sprite(sprite_img)
-blit_sprite(window, sprite, 0, 0)
+blit_sprite(window, sprite, 10, 10)
 
 frame = get_string(window)
 print('\n'.join(frame))
