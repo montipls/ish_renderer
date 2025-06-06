@@ -46,7 +46,7 @@ def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x
             if px < 0 or px >= W:
                 continue
             pixel = sprite[sy][sx]
-            if pixel[3] != 0:
+            if pixel[1] != 0:
                 result[py][px][0] = pixel[0]
 
     return result
