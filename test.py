@@ -5,11 +5,12 @@ import shutil
 
 _, rows = shutil.get_terminal_size()
 
-img = Image.open('bg.jpeg')
-img = img.resize((rows, rows))
-window = load_sprite(img)
+bg_img = Image.open('bg.jpeg')
+bg_img = bg_img.resize((rows, rows))
+window = load_sprite(bg_img)
 
-sprite = Image.open('sprite.jpeg')
+sprite_img = Image.open('sprite.jpeg')
+sprite = load_sprite(sprite_img)
 blit_sprite(window, sprite, 0, 0)
 
 frame = get_string(window)
