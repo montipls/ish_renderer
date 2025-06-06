@@ -34,7 +34,7 @@ def main(stdscr):
 
         sys.stdout.write("\033[H")  # move cursor to top-left
         sys.stdout.write(''.join(frame))
-        sys.stdout.write(f"window size: {W} : {H}\n")
+        sys.stdout.write(f"\033[0mwindow size: {W} : {H}\n")
         sys.stdout.flush()
 
         stdscr.refresh()

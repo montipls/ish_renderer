@@ -63,7 +63,7 @@ def get_string(surface: list[list[list[int]]]) -> list[str]:
             bg = surface[y][x][0]
             fg = surface[y+1][x][0]
 
-            char = f"\033[38;5;{fg}m\033[48;5;{bg}m▄\033[0m"
+            char = f"\033[38;5;{fg}m\033[48;5;{bg}m▄"
             line_chars.append(char)
         output_lines.append(''.join(line_chars))
     return output_lines
