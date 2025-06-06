@@ -2,6 +2,7 @@ from PIL import Image
 from renderer import *
 import shutil
 import curses
+import sys
 
 
 W, H = shutil.get_terminal_size()
@@ -26,18 +27,19 @@ def main(stdscr):
     timer = 0
     while True:
         timer += 1
+        key = stdscr.getch()
+        if key == ord('q'):
+            break
 
         blit_sprite(window, sprite, 10, timer)
         frame = get_string(window)
 
-        for y, line in enumerate(frame):
-            stdscr.addstr(y, 0, line[:W])
-
-        stdscr.addstr(H, 0, f"window size: {W} : {H}")
+        sys.stdout.write("\033[H")  # move cursor to top-left
+        sys.stdout.write('\n'.join(frame) + '\n')
+        sys.stdout.write(f"window size: {W} : {H}\n")
+        sys.stdout.flush()
+        
         stdscr.refresh()
-
-        if stdscr.getch() == ord('q'):
-            break
 
 
 curses.wrapper(main)
