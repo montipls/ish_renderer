@@ -1,4 +1,5 @@
 from PIL import Image
+import copy
 
 
 def rgb_to_256(r, g, b):
@@ -30,7 +31,7 @@ def load_sprite(img: Image) -> list[list[list[int]]]:
 
 
 def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x: int, y: int) -> list[list[list[int]]]:
-    result = surface.copy()
+    result = copy.deepcopy(surface)
     H = len(result)
     W = len(result[0])
     sh = len(sprite)
@@ -49,7 +50,7 @@ def blit_sprite(surface: list[list[list[int]]], sprite: list[list[list[int]]], x
                 result[py][px][0] = pixel[0]
                 result[py][px][1] = pixel[1]
                 result[py][px][2] = pixel[2]
-                
+
     return result
 
 
