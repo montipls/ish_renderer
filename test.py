@@ -38,16 +38,16 @@ def main(stdscr):
         key = stdscr.getch()
         if key == ord('q'):
             break
-        if key == ord('h'):
+        if key == ord('h') and x_vel == 0:
             x_vel = -1
             y_vel = 0
-        if key == ord('l'):
+        if key == ord('l') and x_vel == 0:
             x_vel = 1
             y_vel = 0
-        if key == ord('j'):
+        if key == ord('j') and y_vel == 0:
             x_vel = 0
             y_vel = 1
-        if key == ord('k'):
+        if key == ord('k') and y_vel == 0:
             x_vel = 0
             y_vel = -1
 
