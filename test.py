@@ -31,7 +31,7 @@ def main(stdscr):
         frame = get_string(window)
 
         for y, line in enumerate(frame):
-            stdscr.addstr(y, 0, line)
+            stdscr.addstr(y, 0, line[:W])
 
         stdscr.addstr(H, 0, f"window size: {W} : {H}")
         stdscr.refresh()
