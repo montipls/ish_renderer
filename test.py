@@ -32,18 +32,27 @@ def main(stdscr):
 
     x = 0
     y = 0
+    x_vel = 1
+    y_vel = 0
     while True:
         key = stdscr.getch()
         if key == ord('q'):
             break
         if key == ord('h'):
-            x -= 1
+            x_vel = -1
+            y_vel = 0
         if key == ord('l'):
-            x += 1
+            x_vel = 1
+            y_vel = 0
         if key == ord('j'):
-            y += 1
+            x_vel = 0
+            y_vel = 1
         if key == ord('k'):
-            y -= 1
+            x_vel = 0
+            y_vel = -1
+
+        x += x_vel
+        y += y_vel
 
         frame = get_string(blit_sprite(window, sprite, x, y))
 
