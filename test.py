@@ -5,7 +5,7 @@ import curses
 import sys
 
 
-W, H = shutil.get_terminal_size()
+W, _ = shutil.get_terminal_size()
 even = W % 2 == 0
 
 bg_img = Image.open('bg.jpeg')
@@ -16,7 +16,6 @@ sprite_img = Image.open('sprite.png')
 sprite = load_sprite(sprite_img)
 blit_sprite(window, sprite, 10, 10)
 frame = get_string(window)
-W = len(frame[0])
 H = len(frame)
 
 
@@ -35,7 +34,7 @@ def main(stdscr):
         frame = get_string(window)
 
         sys.stdout.write("\033[H")  # move cursor to top-left
-        sys.stdout.write(''.join(frame) + '\n')
+        sys.stdout.write(''.join(frame))
         sys.stdout.write(f"window size: {W} : {H}\n")
         sys.stdout.flush()
 
