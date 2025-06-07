@@ -17,6 +17,7 @@ window = load_sprite(bg_img)
 sprite_img = Image.open('sprite.png')
 sprite_size = sprite_img.size
 sprite = load_sprite(sprite_img)
+opaque_sprite_data = get_opaque_data(sprite)
 H = size[1]
 
 
@@ -87,7 +88,7 @@ def main(stdscr):
         last_time = now
         fps = 1 / dt
 
-        frame = get_string(blit_sprite(window, sprite, x, y))
+        frame = get_string(blit_sprite(window, opaque_sprite_data, x, y))
 
         write(esc_home)
         write(frame)

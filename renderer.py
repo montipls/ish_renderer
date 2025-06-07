@@ -7,6 +7,16 @@ fgpalette = [f"\033[38;5;{i}m▄" for i in range(256)]
 bgpalette = [f"\033[48;5;{i}m▄" for i in range(256)]
 
 
+def get_opaque_data(sprite: list[list[int]]) -> dict[tuple[int, int], int]:
+    lookup = {}
+    for y, row in enumerate(sprite):
+        for x, px in enumerate(row):
+            if px:
+                lookup[(x, y)] = px
+    
+    return lookup
+
+
 def rgb_to_256(r, g, b):
     r_ = int(r / 256 * 6)
     g_ = int(g / 256 * 6)
@@ -34,32 +44,20 @@ def load_sprite(img: Image) -> list[list[int]]:
     return result
 
 
-def blit_sprite(surface: list[list[int]], sprite: list[list[int]], x: int, y: int) -> list[list[int]]:
-    result = surface[:]
+def blit_sprite(surface: list[list[int]], opaque_sprite_data: dict[tuple[int, int], int], x: int, y: int) -> list[list[int]]:
     H = len(surface)
     W = len(surface[0])
-    sh = len(sprite)
-    sw = len(sprite[0])
-
-    valid_sy_start = max(0, -y)
-    valid_sy_end = min(sh, H - y)
-    valid_sx_start = max(0, -x)
-    valid_sx_end = min(sw, W - x)
-
+    result = surface[:]
     copied = [False] * H
 
-    for sy in range(valid_sy_start, valid_sy_end):
+    for (sx, sy), pixel in opaque_sprite_data.items():
+        px = x + sx
         py = y + sy
-        if not copied[py]:
-            result[py] = surface[py][:]
-            copied[py] = True
-        row = result[py]
-        sprite_row = sprite[sy]
-        for sx in range(valid_sx_start, valid_sx_end):
-            px = x + sx
-            pixel = sprite_row[sx]
-            if pixel and row[px] != pixel:
-                row[px] = pixel
+        if 0 <= px < W and 0 <= py < H:
+            if not copied[py]:
+                result[py] = surface[py][:]
+                copied[py] = True
+            result[py][px] = pixel
 
     return result
 
