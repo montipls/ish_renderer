@@ -91,11 +91,10 @@ def main(stdscr):
 
         write(esc_home)
         write(frame)
-        write(info + '\r\n')
-        write(f"fps: {fps:.1f}\r\n")
-        write(f"wall collision: {'1' if lw or rw or tw or bw else '0'}\r\n")
-        write(f"position (top-left): {x}, {y}")
-        write("\033[J")
+        write(info + '    \r\n')
+        write(f"fps: {fps:.1f}    \r\n")
+        write(f"wall collision: {'1' if lw or rw or tw or bw else '0'}    \r\n")
+        write(f"position (top-left): {x}, {y}    \r\n")
         flush()
 
         stdscr.refresh()

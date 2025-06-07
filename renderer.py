@@ -2,10 +2,9 @@ from PIL import Image
 import copy
 
 
-precomputed_chars = {}
-for fg in range(256):
-    for bg in range(256):
-        precomputed_chars[(fg, bg)] = f"\033[38;5;{fg}m\033[48;5;{bg}m▄"
+palette = ['\033[38;5;{0}m\033[48;5;{1}m▄'.format(fg, bg) for fg in range(256) for bg in range(256)]
+fgpalette = [f"\033[38;5;{i}m▄" for i in range(256)]
+bgpalette = [f"\033[48;5;{i}m▄" for i in range(256)]
 
 
 def rgb_to_256(r, g, b):
@@ -47,18 +46,19 @@ def blit_sprite(surface: list[list[int]], sprite: list[list[int]], x: int, y: in
     valid_sx_start = max(0, -x)
     valid_sx_end = min(sw, W - x)
 
-    copied_rows = set()
+    copied = [False] * H
 
     for sy in range(valid_sy_start, valid_sy_end):
         py = y + sy
-        if py not in copied_rows:
+        if not copied[py]:
             result[py] = surface[py][:]
-            copied_rows.add(py)
+            copied[py] = True
         row = result[py]
+        sprite_row = sprite[sy]
         for sx in range(valid_sx_start, valid_sx_end):
             px = x + sx
-            pixel = sprite[sy][sx]
-            if pixel:
+            pixel = sprite_row[sx]
+            if pixel and row[px] != pixel:
                 row[px] = pixel
 
     return result
@@ -67,18 +67,38 @@ def blit_sprite(surface: list[list[int]], sprite: list[list[int]], x: int, y: in
 def get_string(surface: list[list[int]]) -> str:
     W = len(surface[0])
     H = len(surface)
-    pc = precomputed_chars
+
+    p = palette
+    fgp = fgpalette
+    bgp = bgpalette
     
     output_lines = []
     outpend = output_lines.append
     for y in range(0, H, 2):
         line_chars = []
         append = line_chars.append
+        
+        last_fg = -1
+        last_bg = -1
+        
+        row0 = surface[y]
+        row1 = surface[y+1]
 
         for x in range(W):
-            bg = surface[y][x]
-            fg = surface[y+1][x]
+            bg = row0[x]
+            fg = row1[x]
 
-            append(pc[(fg, bg)])
+            if fg != last_fg and bg != last_bg:
+                append(p[(fg << 8) | bg])
+                last_fg, last_bg = fg, bg
+            elif fg != last_fg:
+                append(fgp[fg])
+                last_fg = fg
+            elif bg != last_bg:
+                append(bgp[bg])
+                last_bg = bg
+            else:
+                append('▄')
+
         outpend(''.join(line_chars))
     return ''.join(output_lines)
