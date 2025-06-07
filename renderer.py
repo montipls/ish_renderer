@@ -2,6 +2,12 @@ from PIL import Image
 import copy
 
 
+precomputed_chars = {}
+for fg in range(256):
+    for bg in range(256):
+        precomputed_chars[(fg, bg)] = f"\033[38;5;{fg}m\033[48;5;{bg}m▄"
+
+
 def rgb_to_256(r, g, b):
     r_ = int(r / 256 * 6)
     g_ = int(g / 256 * 6)
@@ -14,7 +20,7 @@ def rgb_to_256(r, g, b):
     return 16 + 36 * r_ + 6 * g_ + b_
 
 
-def load_sprite(img: Image) -> list[list[list[int]]]:
+def load_sprite(img: Image) -> list[list[int]]:
     img = img.convert("RGBA")
     width, height = img.size
     pixels = img.load()
@@ -29,31 +35,28 @@ def load_sprite(img: Image) -> list[list[list[int]]]:
     return result
 
 
-def blit_sprite(surface, sprite, x, y):
+def blit_sprite(surface: list[list[int]], sprite: list[list[int]], x: int, y: int) -> list[list[int]]:
+    result = surface[:]
     H = len(surface)
     W = len(surface[0])
     sh = len(sprite)
     sw = len(sprite[0])
 
-    result = surface[:]
-    rows_copied = {}
+    valid_sy_start = max(0, -y)
+    valid_sy_end = min(sh, H - y)
+    valid_sx_start = max(0, -x)
+    valid_sx_end = min(sw, W - x)
 
-    for sy in range(sh):
+    copied_rows = set()
+
+    for sy in range(valid_sy_start, valid_sy_end):
         py = y + sy
-        if py < 0 or py >= H:
-            continue
-
-        if py not in rows_copied:
+        if py not in copied_rows:
             result[py] = surface[py][:]
-            rows_copied[py] = True
-
+            copied_rows.add(py)
         row = result[py]
-
-        for sx in range(sw):
+        for sx in range(valid_sx_start, valid_sx_end):
             px = x + sx
-            if px < 0 or px >= W:
-                continue
-
             pixel = sprite[sy][sx]
             if pixel:
                 row[px] = pixel
@@ -61,17 +64,13 @@ def blit_sprite(surface, sprite, x, y):
     return result
 
 
-def get_string(surface: list[list[list[int]]]) -> list[str]:
-    H = len(surface)
+def get_string(surface: list[list[int]]) -> str:
     W = len(surface[0])
-
+    H = len(surface)
+    pc = precomputed_chars
+    
     output_lines = []
     outpend = output_lines.append
-
-    fg_prefix = "\033[38;5;"
-    bg_prefix = "m\033[48;5;"
-    suffix = "m▄"
-
     for y in range(0, H, 2):
         line_chars = []
         append = line_chars.append
@@ -80,11 +79,6 @@ def get_string(surface: list[list[list[int]]]) -> list[str]:
             bg = surface[y][x]
             fg = surface[y+1][x]
 
-            append(fg_prefix)
-            append(str(fg))
-            append(bg_prefix)
-            append(str(bg))
-            append(suffix)
-
+            append(pc[(fg, bg)])
         outpend(''.join(line_chars))
-    return output_lines
+    return ''.join(output_lines)
