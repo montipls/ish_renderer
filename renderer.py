@@ -1,5 +1,4 @@
 from PIL import Image
-import copy
 
 
 palette = ['\033[38;5;{0}m\033[48;5;{1}m▄'.format(fg, bg) for fg in range(256) for bg in range(256)]
