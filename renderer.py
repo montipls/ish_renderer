@@ -1,9 +1,19 @@
 from PIL import Image
 
 
-palette = ['\033[38;5;{0}m\033[48;5;{1}m▄'.format(fg, bg) for fg in range(256) for bg in range(256)]
+palette = ['\033[38;5;{0}m\033[48;5;{1}m'.format(fg, bg) for fg in range(256) for bg in range(256)]
 fgpalette = [f"\033[38;5;{i}m▄" for i in range(256)]
 bgpalette = [f"\033[48;5;{i}m▄" for i in range(256)]
+
+
+def get_mono_data(sprite: list[list[bool]]) -> list[tuple[int, int]]:
+    lookup = []
+    push = lookup.append
+    for y, row in enumerate(sprite):
+        for x, px in enumerate(row):
+            px and push((x, y))
+
+    return lookup
 
 
 def get_opaque_data(sprite: list[list[int]]) -> dict[tuple[int, int], int]:
@@ -28,6 +38,20 @@ def rgb_to_256(r, g, b):
     return 16 + 36 * r_ + 6 * g_ + b_
 
 
+def load_mono_sprite(img: Image) -> list[list[bool]]:
+    img = img.convert("RGBA")
+    width, height = img.size
+    pixels = img.load()
+
+    result = []
+    for y in range(height):
+        row = []
+        for x in range(width):
+            row.append(pixels[x, y][3] > 0)
+        result.append(row)
+    return result
+
+
 def load_sprite(img: Image) -> list[list[int]]:
     img = img.convert("RGBA")
     width, height = img.size
@@ -42,6 +66,24 @@ def load_sprite(img: Image) -> list[list[int]]:
         result.append(row)
     return result
 
+
+def blit_mono_sprite(surface: list[list[bool]], mono_sprite_data: list[tuple[int, int]], x: int, y: int) -> list[list[bool]]:
+    H = len(surface)
+    W = len(surface[0])
+    result = surface[:]
+    copied = [False] * H
+
+    for (sx, sy) in mono_sprite_data:
+        px = x + sx
+        py = y + sy
+        if 0 <= px < W and 0 <= py < H:
+            if not copied[py]:
+                result[py] = surface[py][:]
+                copied[py] = True
+            result[py][px] = not surface[py][px]
+
+    return result
+    
 
 def blit_sprite(surface: list[list[int]], opaque_sprite_data: dict[tuple[int, int], int], x: int, y: int) -> list[list[int]]:
     H = len(surface)
@@ -59,6 +101,28 @@ def blit_sprite(surface: list[list[int]], opaque_sprite_data: dict[tuple[int, in
             result[py][px] = pixel
 
     return result
+
+
+def get_mono_string(fg: int, bg: int, bitmap: list[list[bool]]) -> str:
+    p = palette[(fg << 8) | bg]
+    result = [p]
+    push = result.append
+
+    for y in range(0, len(bitmap), 2):
+        top_row = bitmap[y]
+        bottom_row = bitmap[y + 1]
+
+        for top, bottom in zip(top_row, bottom_row):
+            if top and bottom:
+                push('█')
+            elif top and not bottom:
+                push('▀')
+            elif not top and bottom:
+                push('▄')
+            else:
+                push(' ')
+
+    return ''.join(result)
 
 
 def get_string(surface: list[list[int]]) -> str:

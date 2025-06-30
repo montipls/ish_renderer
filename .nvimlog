@@ -1,0 +1,6 @@
+INFO  2025-06-07T14:04:28.352 35    patch_terminfo_bugs:1608: Disabling smglr with TERM=xterm for non-xterm.
+INFO  2025-06-07T14:04:29.768 35    on_process_exit:392: exited: pid=37 status=2 stoptime=0
+INFO  2025-06-07T14:04:29.889 35    main:578: starting main loop
+INFO  2025-06-07T14:04:53.108 35    emsg_multiline:687: E518: Unknown option: colorscheme?
+INFO  2025-06-07T14:04:58.257 35    emsg_multiline:687: E185: Cannot find color scheme '?'
+INFO  2025-06-07T14:05:05.399 35    mch_exit:99: Nvim exit: 0

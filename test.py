@@ -10,14 +10,14 @@ W, _ = shutil.get_terminal_size()
 even = W % 2 == 0
 size = (W, W if even else W-1)
 
-bg_img = Image.open('bg.jpeg')
+bg_img = Image.open('bg.png')
 bg_img = bg_img.resize(size)
-window = load_sprite(bg_img)
+window = load_mono_sprite(bg_img)
 
 sprite_img = Image.open('sprite.png')
 sprite_size = sprite_img.size
-sprite = load_sprite(sprite_img)
-opaque_sprite_data = get_opaque_data(sprite)
+sprite = load_mono_sprite(sprite_img)
+mono_sprite_data = get_mono_data(sprite)
 H = size[1]
 
 
@@ -42,6 +42,11 @@ def main(stdscr):
     last_time = time.time()
 
     while True:
+        now = time.time()
+        dt = now - last_time
+        last_time = now
+        fps = 1 / dt
+
         if last_key != -1:
             while key == last_key:
                 key = stdscr.getch()
@@ -83,22 +88,23 @@ def main(stdscr):
         else:
             y += y_vel
 
-        now = time.time()
-        dt = now - last_time
-        last_time = now
-        fps = 1 / dt
-
-        frame = get_string(blit_sprite(window, opaque_sprite_data, x, y))
+        frame = get_mono_string(rgb_to_256(255, 255, 255), rgb_to_256(0, 0, 0), blit_mono_sprite(window, mono_sprite_data, x, y))
 
         write(esc_home)
         write(frame)
         write(info + '    \r\n')
+        write(f"buffer length: {len(frame)}    \r\n")
         write(f"fps: {fps:.1f}    \r\n")
         write(f"wall collision: {'1' if lw or rw or tw or bw else '0'}    \r\n")
         write(f"position (top-left): {x}, {y}    \r\n")
         flush()
 
         stdscr.refresh()
+
+        elapsed = time.time() - now
+        sleep_time = 1/30 - elapsed
+        if sleep_time > 0:
+            time.sleep(sleep_time)
 
 
 curses.wrapper(main)
